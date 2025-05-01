@@ -2,7 +2,6 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
-
 #include "AccessPoint.h"
 #include "Handlers.h"
 #include "WiFiFunctions.h"
@@ -23,6 +22,7 @@ void setup() {
 
   server.on("/set-wifi-credentials", HTTP_POST, handleSetWifiCredentials);
   server.on("/send-data", HTTP_GET, handleSendData);
+
   server.begin();
 
   Serial.println("Servidor HTTP iniciado.");
@@ -30,4 +30,5 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  sendSensorData();
 }

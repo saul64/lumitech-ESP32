@@ -4,6 +4,13 @@
 #include "WiFiFunctions.h"
 #include "Backend.h"
 #include <WiFi.h>
+#include "DHT.h"
+#include <HTTPClient.h>
+
+#define DHTPIN 4      
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
 
 extern WebServer server;
 extern String target_ssid, target_password, received_uuid;
@@ -55,3 +62,46 @@ void handleSendData() {
 
   server.send(200, "application/json", jsonStr);
 }
+
+void sendSensorData() {
+  static unsigned long lastSendTime = 0;
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - lastSendTime >= 5000) { 
+    lastSendTime = currentMillis;
+
+
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+
+    // Verifica si los datos leídos son válidos
+    if (isnan(temperature) || isnan(humidity)) {
+      Serial.println("Error al leer el sensor DHT11");
+      return;
+    }
+
+
+    StaticJsonDocument<200> jsonDoc;
+    jsonDoc["temperature"] = temperature;
+    jsonDoc["humidity"] = humidity;
+    jsonDoc["rosette_mac"] = WiFi.macAddress();
+
+    String response;
+    serializeJson(jsonDoc, response);
+
+    HTTPClient http;
+    http.begin("http://192.168.0.25/roseta/sensor-data");  
+    http.addHeader("Content-Type", "application/json");
+
+    int httpResponseCode = http.POST(response);
+
+    if (httpResponseCode > 0) {
+      String responseBody = http.getString();
+      Serial.println("Datos enviados a NestJS correctamente");
+      Serial.println(responseBody);
+    } else {
+      Serial.println("Error al enviar los datos");
+    }
+  }
+}
+

@@ -3,5 +3,5 @@
 
 void handleSetWifiCredentials();
 void handleSendData();
-
+void sendSensorData();
 #endif
