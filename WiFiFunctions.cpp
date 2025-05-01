@@ -4,7 +4,6 @@
 #include "AccessPoint.h"
 
 extern String target_ssid, target_password;
-extern bool uuidReceived;
 extern const char* ap_ssid;
 
 void connectToWiFi() {
@@ -25,10 +24,9 @@ void connectToWiFi() {
 
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("\nConectado a WiFi exitosamente.");
-    delay(5000);
+    delay(10000);
 
     sendRosettaIpToBackend();
-    sendCredentialsToBackend();
   } else {
     Serial.println("\nError al conectar a WiFi.");
     setupAccessPoint(ap_ssid);

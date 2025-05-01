@@ -2,6 +2,6 @@
 #define HANDLERS_H
 
 void handleSetWifiCredentials();
-void handleSetUUID();
+void handleSendData();
 
 #endif

@@ -22,7 +22,7 @@ void setup() {
   setupAccessPoint(ap_ssid);
 
   server.on("/set-wifi-credentials", HTTP_POST, handleSetWifiCredentials);
-  server.on("/set-uuid", HTTP_POST, handleSetUUID);
+  server.on("/send-data", HTTP_GET, handleSendData);
   server.begin();
 
   Serial.println("Servidor HTTP iniciado.");
